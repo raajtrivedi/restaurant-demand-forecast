@@ -1,53 +1,44 @@
-# 🍽️ AI Demand Forecasting & Inventory Optimization
+# 🍽️ AI Demand Forecasting & Inventory Optimization System
 
-An enterprise-grade Time Series Forecasting project developed as part of the **Data Science & Machine Learning Internship Program** at Infotact Solutions.
+Hi! This is my Project 3 for the **Data Science & Machine Learning Internship Program** at Infotact Solutions.
 
-This project focuses on building an AI-powered demand forecasting system for a restaurant chain using synthetic POS sales data. The system predicts daily units sold per menu item, enabling proactive inventory management and reduction of food waste.
+This project focuses on building an AI-powered demand forecasting system using real-world Restaurant POS sales data. By predicting future daily sales, restaurants can order the right inventory, prepare staff schedules, and reduce food waste.
 
 ---
 
 # 📌 Project Objective
 
 Restaurant inventory management often suffers from:
-
 - Over-ordering leading to food waste and spoilage
 - Under-ordering resulting in stockouts and lost revenue
 - Reliance on gut feeling instead of data-driven decisions
-- No visibility into seasonal and weekly demand patterns
 
 This project aims to solve these challenges using:
-
-- 🤖 Machine Learning
-- 📈 Time Series Forecasting
-- 🔧 Advanced Feature Engineering
-- 📊 Demand Pattern Analysis
+- 🤖 Machine Learning (Random Forest)
+- 📈 Time-Series Forecasting
+- 🔧 Advanced Feature Engineering (Lags & Rolling Windows)
+- ⚡ Automated FastAPI Predictions
 
 ---
 
-# 🏪 Problem Statement
+# 🏛️ Problem Statement & My Strategy
 
-The system accepts historical POS sales data and automatically:
+When I first loaded the raw dataset, it had about 1,000 individual transactions. Initially, I thought about predicting sales for each specific menu item. However, I realized the data was too sparse—many items had zero sales on certain days. 
 
-- Predicts future daily sales volume per menu item
-- Captures weekly and seasonal demand patterns
-- Enables restaurant managers to optimize purchase orders
+**My Solution:** Instead of predicting individual menu items (which would lead to poor model accuracy), I aggregated the data to predict **Total Daily Revenue** instead. The system takes historical daily revenue data and automatically predicts future demand.
 
 ---
 
 # 📂 Dataset
 
 ## Dataset Used
+- Balaji Fast Food Sales Dataset (April 2022 - March 2023)
 
-- Synthetic Restaurant POS Sales Data (2 years)
-
-## Main Features
-
-- Date
-- Menu Item
-- Units Sold
-- Revenue
-- Is Holiday
-- Day of Week
+## Main Features Used
+- `total_sales` (Target Variable)
+- `lag_7`, `lag_14`, `lag_21` (Past Memory)
+- `rolling_mean_7`, `rolling_mean_14` (Recent Trends)
+- `day_of_week`, `is_weekend`, `is_holiday` (Chronological Context)
 
 ---
 
@@ -57,160 +48,52 @@ The system accepts historical POS sales data and automatically:
 |---|---|
 | Programming Language | Python |
 | Data Processing | Pandas, NumPy |
-| Visualization | Matplotlib, Seaborn, Plotly |
-| Machine Learning | Scikit-learn |
-| Forecasting Models | Linear Regression, Random Forest, XGBoost, Prophet |
-| Notebook Environment | Jupyter Notebook |
-| Version Control | Git & GitHub |
+| Time-Series Analysis | Statsmodels (`seasonal_decompose`, `autocorrelation_plot`) |
+| Visualization | Matplotlib, Seaborn |
+| Machine Learning | Scikit-learn (Linear Regression, Random Forest Regressor) |
+| Deployment & API | FastAPI, Uvicorn, Joblib |
 
 ---
 
-# ✨ Key Features
+# 📅 Four-Week Development Roadmap
 
-- ✅ Time Series Data Cleaning & EDA
-- ✅ Seasonal Decomposition
-- ✅ Autocorrelation Analysis
-- ✅ Lag Feature Engineering
-- ✅ Rolling Window Statistics
-- ✅ Cyclic Encoding (sin/cos)
-- ✅ Sequential Train/Test Split (No Data Leakage)
-- ✅ XGBoost with TimeSeriesSplit CV
-- ✅ Prophet Forecasting
-- ✅ Feature Importance Analysis
-- ✅ MAE & RMSE Evaluation
-- ✅ Business Reporting
-
----
-
-# 📊 Exploratory Data Analysis (EDA)
-
-The project includes:
-
-- Overall sales trend analysis
-- Weekly seasonality patterns
-- Monthly heatmap visualization
-- Seasonal decomposition
-- Autocorrelation analysis
-
----
-
-# 🤖 Machine Learning Models Used
-
-The following ML models were trained and evaluated:
-
-1. Linear Regression (Baseline)
-2. Random Forest Regressor
-3. XGBoost Regressor
-4. Prophet (Time Series Model)
-
-The best-performing model was selected using:
-
-- Mean Absolute Error (MAE)
-- Root Mean Square Error (RMSE)
-- TimeSeriesSplit Cross Validation
-
----
-
-# 📈 Evaluation Metrics
-
-Models were evaluated using:
-
-- Mean Absolute Error (MAE)
-- Root Mean Square Error (RMSE)
-- R² Score
-- Feature Importance Scores
-- Residual Analysis
-
----
-
-# 🔄 Project Workflow
-
-```text
-Data Generation
-      ↓
-Data Cleaning & EDA
-      ↓
-Seasonal Decomposition
-      ↓
-Feature Engineering
-      ↓
-Sequential Train/Test Split
-      ↓
-Model Training
-      ↓
-Hyperparameter Tuning
-      ↓
-Model Evaluation
-      ↓
-Feature Importance
-      ↓
-Business Reporting
-```
-
----
-
-# 🔧 Feature Engineering
-
-The ML pipeline includes:
-
-- Lag features (1, 3, 7, 14, 21, 28 days)
-- Rolling window statistics (7, 14, 30 days)
-- Exponentially Weighted Mean (EWM)
-- Cyclic encoding for day of week and month
-- Holiday and weekend flags
-- Trend feature
-
----
-
-# 📌 Example Output
-
-```python
-Menu Item: Chicken Biryani
-XGBoost MAE: 16.1 units
-Improvement over baseline: 75%
-Top Feature: day_of_week (19%)
-```
-
----
-
-# 📅 Four-Week Internship Development Roadmap
-
-## ✅ Week 1 — Data Ingestion & Time-Series EDA
-
-- Dataset generation
-- Datetime cleaning
-- Sales trend plotting
-- Seasonal decomposition
-- Autocorrelation analysis
+## ✅ Week 1 — Data Collection, Cleaning & EDA
+- Handled messy mixed datetime formats using `format='mixed'`.
+- Grouped individual orders into total daily sales to fix data sparsity.
+- Used `seasonal_decompose` to understand weekly patterns.
+- Checked autocorrelation and proved 7-day patterns mathematically.
 
 ---
 
 ## ✅ Week 2 — Advanced Feature Engineering
-
-- Lag features
-- Rolling window statistics
-- Cyclic encoding
-- Sequential train/test split
+- Created chronological features (Weekends, Holidays).
+- Fixed the known ISO week rollover bug using `.clip(1, 52)`.
+- Created Lag features & Rolling window statistics.
+- Prevented data leakage using `.shift(1)` before calculating rolling means.
+- **Strict Sequential Train/Test Split** (avoided random splitting).
 
 ---
 
 ## ✅ Week 3 — Model Training & Selection
-
-- Linear Regression baseline
-- Random Forest Regressor
-- XGBoost with TimeSeriesSplit CV
-- Prophet forecasting
-- Hyperparameter tuning
+- Baseline Model: Linear Regression
+- Advanced Model: Random Forest Regressor (`n_estimators=100`, `random_state=42`)
+- Serialized and saved the best model using `joblib`.
 
 ---
 
-## ✅ Week 4 — Evaluation & Business Reporting
+## ✅ Week 4 — Evaluation & Deployment
+- Evaluated the model strictly using MAE (Mean Absolute Error) and RMSE.
+- Extracted Feature Importance to see what truly drives sales.
+- Visualized Actual vs. Predicted sales using line plots.
+- Built a final FastAPI deployment endpoint.
 
-- MAE & RMSE comparison
-- Forecast vs actual plots
-- Feature importance analysis
-- Residual analysis
-- Business summary report
+---
+
+# 💡 Key Learnings from this Project
+As a fresher, this project taught me practical lessons beyond textbook ML:
+1. **Preventing Data Leakage:** I learned to use `.shift(1)` before calculating rolling averages so the model wouldn't "cheat" by looking at current-day sales.
+2. **Strict Sequential Splitting:** I manually split the last 60 days to test the model on truly unseen future data instead of using a standard `train_test_split`.
+3. **Messy Real-World Dates:** I learned to use `format='mixed'` to handle inconsistent slashes and dashes in the raw CSV.
 
 ---
 
@@ -219,37 +102,22 @@ Top Feature: day_of_week (19%)
 ```text
 📦 restaurant-demand-forecast
  ┣ 📂 data
+ ┃ ┗ 📜 Balaji Fast Food Sales.csv
  ┣ 📂 notebooks
- ┣ 📂 src
+ ┃ ┣ 📜 01_data_ingestion_eda.ipynb
+ ┃ ┣ 📜 02_advanced_feature_engineering.ipynb
+ ┃ ┣ 📜 03_model_training_and_selection.ipynb
+ ┃ ┗ 📜 04_evaluation_and_business_reporting.ipynb
  ┣ 📂 outputs
- ┣ 📂 models
+ ┃ ┣ 📜 cleaned_daily_sales.csv
+ ┃ ┣ 📜 train_data.csv
+ ┃ ┣ 📜 test_data.csv
+ ┃ ┗ 📜 random_forest_model.pkl
+ ┣ 📜 main.py
  ┣ 📜 README.md
  ┗ 📜 requirements.txt
-```
-
----
-
-# 🚀 Future Improvements
-
-- 🔥 FastAPI deployment
-- 🌐 Web dashboard integration
-- 🌦️ Weather API integration
-- 📱 Real-time inventory portal
-- ☁️ Cloud deployment
-- 📊 Live analytics dashboard
-
----
-
-# 📌 GitHub Best Practices Followed
-
-- ✅ Semantic commit messages
-- ✅ Incremental weekly commits
-- ✅ Clean notebook management
-- ✅ Structured repository organization
-- ✅ Modular ML workflow
 
 ---
 
 # 👨‍💻 Contributors
-
-1. Raj Trivedi
+1. Raj Trivedi 
