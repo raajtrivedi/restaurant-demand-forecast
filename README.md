@@ -116,6 +116,7 @@ As a fresher, this project taught me practical lessons beyond textbook ML:
  ┣ 📜 main.py
  ┣ 📜 README.md
  ┗ 📜 requirements.txt
+```
 
 ---
 
